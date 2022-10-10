@@ -33,30 +33,12 @@ describe('1.1 GET api/topics', () => {
                 });
             });
     });
+    test('respond with 404 if wrong api called incorrectly', () => {
+        return request(app)
+            .get('/api/topics/thisTopic')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Route not found');
+            })
+    });
 });
-
-
-// test('respond with 400 if putting in an invalid column ', () => {
-//     return request(app)
-//         .get('/api/treasures?sort_by=colour')
-//         .expect(400)
-//         .then(({ body }) => {
-//             expect(body.msg).toBe('Invalid sort value');
-//         })
-// });
-// test('respond with 404 if endpoint does not exist', () => {
-//     return request(app)
-//         .get('/api/treasures/donkeys')
-//         .expect(404)
-//         .then(({ body }) => {
-//             expect(body.msg).toBe('Route not found');
-//         })
-// });
-// test('respond with 400 if order by value is invalid', () => {
-//     return request(app)
-//         .get('/api/treasures?order=up')
-//         .expect(400)
-//         .then(({ body }) => {
-//             expect(body.msg).toBe('Invalid order value');
-//         })
-// });
