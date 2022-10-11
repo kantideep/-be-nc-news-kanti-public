@@ -1,0 +1,6 @@
+You are now connected to database "nc_news_test" as user "kantideep".
+   username    |                title                | article_id |               body                | topic |     created_at      | votes 
+---------------+-------------------------------------+------------+-----------------------------------+-------+---------------------+-------
+ butter_bridge | Living in the shadow of a great man |          1 | I find this existence challenging | mitch | 2020-07-09 21:11:00 |   100
+(1 row)
+
