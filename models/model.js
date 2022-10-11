@@ -4,7 +4,7 @@ exports.selectTopics = () => {
 
     sqlQuery = 'SELECT * FROM topics';
 
-    return db        
+    return db
         .query(sqlQuery)
         .then((data) => {
             const topics = data.rows;
@@ -22,10 +22,23 @@ exports.selectArticleById = (article_id) => {
     return db
         .query(sqlQuery, [article_id])
         .then((result) => {
-            console.log(result.rows.length, '----> should be 0 in model')
+
             if (result.rows.length === 0) {
                 return Promise.reject({ status: 404, msg: 'ID not found!' })
             }
+
             return result.rows[0]
+        })
+}
+
+exports.selectUsers = () => {
+
+    sqlQuery = `SELECT * FROM users`;
+
+    return db
+        .query(sqlQuery)
+        .then((data) => {
+            const users = data.rows;
+            return users;
         })
 }

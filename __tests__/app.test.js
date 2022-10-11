@@ -69,7 +69,6 @@ describe('Task 4: GET /api/articles/:article_id', () => {
             .get('/api/articles/banana')
             .expect(400)
             .then(({ body }) => {
-                console.log(body);
                 expect(body.msg).toBe('Invalid ID!');
             })
     });
@@ -81,4 +80,22 @@ describe('Task 4: GET /api/articles/:article_id', () => {
                 expect(body.msg).toBe('ID not found!')
             })
     });
+
+    describe('Task 5: GET /api/users', () => {
+        test('200, responds with an array of topic objects ', () => {
+            return request(app)
+                .get('/api/users')
+                .expect(200)
+                .then(({ body }) => {
+                    const { users } = body;
+                    expect(users).toHaveLength(4);
+                    expect(users).toBeInstanceOf(Array);
+                    users.forEach((user) => {
+                        expect.objectContaining({
+
+                        })
+                    })
+                })
+        });
+    });      
 });
