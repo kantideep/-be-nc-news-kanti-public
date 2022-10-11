@@ -1,4 +1,4 @@
-const { selectTopics, selectArticleById, selectUsers } = require('../models/model');
+const { selectTopics, selectArticleById, selectUsers, updateVotebyArticleId } = require('../models/model');
 
 exports.getTopics = (req, res, next) => {
 
@@ -29,6 +29,23 @@ exports.getUsers = (req, res, next) => {
     selectUsers()
         .then((users) => {
             res.status(200).send({ users });
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
+
+exports.updateVotes = (req, res, next) => {
+
+    const { article_id } = req.params;
+
+    const voteChange = req.body.inc_votes;
+
+    const voteObjKey = Object.keys(req.body)[0];
+
+    updateVotebyArticleId(voteChange, article_id, voteObjKey)
+        .then((updatedArticle) => {
+            res.status(200).send({ updatedArticle: updatedArticle });
         })
         .catch((err) => {
             next(err);

@@ -42,3 +42,24 @@ exports.selectUsers = () => {
             return users;
         })
 }
+
+exports.updateVotebyArticleId = (voteChange, article_id, voteObjKey) => {
+
+    if (typeof voteChange !== 'number' && voteChange) {
+        return Promise.reject({ status: 400, msg: 'Wrong data type!' });
+    }
+
+    sqlQuery = `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`;
+
+    return db
+        .query(sqlQuery, [voteChange, article_id])
+        .then((result) => {
+
+            if (result.rows.length === 0) {
+                return Promise.reject({ status: 404, msg: 'ID not found!' })
+            }
+
+            const updatedArticle = result.rows[0];
+            return updatedArticle;
+        })
+}
