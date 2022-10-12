@@ -54,13 +54,14 @@ describe('Task 4: GET /api/articles/:article_id', () => {
             .expect(200)
             .then(({ body }) => {
                 expect(body.article).toEqual({
-                    username: 'butter_bridge',
+                    author: 'butter_bridge',
                     title: 'Living in the shadow of a great man',
                     article_id: ARTICLE_ID,
                     body: 'I find this existence challenging',
                     topic: 'mitch',
                     created_at: '2020-07-09T20:11:00.000Z',
-                    votes: 100
+                    votes: 100,
+                    comment_count: 11
                 });
             });
     });

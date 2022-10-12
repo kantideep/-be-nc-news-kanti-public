@@ -14,6 +14,8 @@ app.get('/api/users', getUsers)
 
 app.patch('/api/articles/:article_id', updateVotes)
 
+
+
 //Handle endpoint error
 app.all('/*', (req, res) => {
     res.status(404).send({ msg: 'Endpoint not found' });

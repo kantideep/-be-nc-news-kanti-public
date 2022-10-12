@@ -14,10 +14,11 @@ exports.selectTopics = () => {
 
 exports.selectArticleById = (article_id) => {
 
-    sqlQuery = `SELECT u.username, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes
-                FROM users u, articles a
-                WHERE u.username = a.author
-                AND a.article_id = $1;`
+    sqlQuery = `SELECT a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes, count(c.body) ::INT AS comment_count
+                FROM articles a, comments c
+                WHERE a.article_id = c.article_id
+                AND a.article_id = $1
+                GROUP BY a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes;`
 
     return db
         .query(sqlQuery, [article_id])
