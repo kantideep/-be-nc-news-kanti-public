@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getTopics, getArticleById, getUsers } = require('./controllers/controller');
+const { getTopics, getArticleById, getUsers, updateVotes } = require('./controllers/controller');
 
 const app = express();
 
@@ -12,6 +12,10 @@ app.get('/api/articles/:article_id', getArticleById)
 
 app.get('/api/users', getUsers)
 
+app.patch('/api/articles/:article_id', updateVotes)
+
+
+
 //Handle endpoint error
 app.all('/*', (req, res) => {
     res.status(404).send({ msg: 'Endpoint not found' });
@@ -21,6 +25,8 @@ app.all('/*', (req, res) => {
 app.use((err, req, res, next) => {
     if (err.code === '22P02') {
         res.status(400).send({ msg: 'Invalid ID!' });
+    } else if (err.code === '23502') {
+        res.status(400).send({ msg: 'Missing key!' });
     } else {
         next(err);
     }

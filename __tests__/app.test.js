@@ -54,13 +54,14 @@ describe('Task 4: GET /api/articles/:article_id', () => {
             .expect(200)
             .then(({ body }) => {
                 expect(body.article).toEqual({
-                    username: 'butter_bridge',
+                    author: 'butter_bridge',
                     title: 'Living in the shadow of a great man',
                     article_id: ARTICLE_ID,
                     body: 'I find this existence challenging',
                     topic: 'mitch',
                     created_at: '2020-07-09T20:11:00.000Z',
-                    votes: 100
+                    votes: 100,
+                    comment_count: 11
                 });
             });
     });
@@ -80,22 +81,83 @@ describe('Task 4: GET /api/articles/:article_id', () => {
                 expect(body.msg).toBe('ID not found!')
             })
     });
+});
 
-    describe('Task 5: GET /api/users', () => {
-        test('200, responds with an array of topic objects ', () => {
-            return request(app)
-                .get('/api/users')
-                .expect(200)
-                .then(({ body }) => {
-                    const { users } = body;
-                    expect(users).toHaveLength(4);
-                    expect(users).toBeInstanceOf(Array);
-                    users.forEach((user) => {
-                        expect.objectContaining({
+describe('Task 5: GET /api/users', () => {
+    test('200, responds with an array of topic objects ', () => {
+        return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({ body }) => {
+                const { users } = body;
+                expect(users).toHaveLength(4);
+                expect(users).toBeInstanceOf(Array);
+                users.forEach((user) => {
+                    expect.objectContaining({
 
-                        })
                     })
                 })
-        });
-    });      
+            })
+    });
+});
+
+describe('Task 6: PATCH /api/articles/:article_id', () => {
+    test('200, responds with updated article when given a object with newVote object', () => {
+        const newVoteObj = { inc_votes: 200 };
+        return request(app)
+            .patch('/api/articles/1')
+            .send(newVoteObj)
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.updatedArticle).toEqual({
+                    article_id: 1,
+                    title: 'Living in the shadow of a great man',
+                    topic: 'mitch',
+                    author: 'butter_bridge',
+                    body: 'I find this existence challenging',
+                    created_at: '2020-07-09T20:11:00.000Z',
+                    votes: 300
+                })
+            })
+    });
+    test('400, if passed an incorrect value in vote object', () => {
+        const newVoteObj = { inc_votes: 'five' };
+        return request(app)
+            .patch('/api/articles/1')
+            .send(newVoteObj)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Wrong data type!');
+            });
+    });
+    test('400, if passed an incorrect key in vote object', () => {
+        const newVoteObj = { wrongKey: 200 };
+        return request(app)
+            .patch('/api/articles/1')
+            .send(newVoteObj)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Missing key!');
+            });
+    });
+    test('400: returns an error when passed an ID of an invalid type', () => {
+        const newVoteObj = { inc_votes: 200 };
+        return request(app)
+            .patch('/api/articles/banana')
+            .send(newVoteObj)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Invalid ID!');
+            })
+    });
+    test('404: returns an error message when passed an article id that is of the correct type but does not exist in the database', () => {
+        const newVoteObj = { inc_votes: 200 };
+        return request(app)
+            .patch('/api/articles/99999')
+            .send(newVoteObj)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('ID not found!')
+            })
+    });
 });
