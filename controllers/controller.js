@@ -1,4 +1,4 @@
-const { selectTopics, selectArticleById, selectUsers, updateVotebyArticleId } = require('../models/model');
+const { selectTopics, selectArticleById, selectUsers, updateVotebyArticleId, selectArticles } = require('../models/model');
 
 exports.getTopics = (req, res, next) => {
 
@@ -52,3 +52,21 @@ exports.updateVotes = (req, res, next) => {
         })
 }
 
+exports.getArticles = (req, res, next) => {
+    // if (Object.keys(req.query).length > 0)
+    //     selectArticlesByQuery(req.query)
+    //         .then((articles) => {
+    //             res.status(200).send(articles);
+    //         })
+    //         .catch((err) => {
+    //             next(err);
+    //         });
+    // else
+        selectArticles()
+            .then((articles) => {
+                res.status(200).send({ articles });
+            })
+            .catch((err) => {
+                next(err);
+            });
+};

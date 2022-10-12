@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getTopics, getArticleById, getUsers, updateVotes } = require('./controllers/controller');
+const { getTopics, getArticleById, getUsers, updateVotes, getArticles } = require('./controllers/controller');
 
 const app = express();
 
@@ -14,6 +14,7 @@ app.get('/api/users', getUsers)
 
 app.patch('/api/articles/:article_id', updateVotes)
 
+app.get('/api/articles', getArticles);
 
 
 //Handle endpoint error

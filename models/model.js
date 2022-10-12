@@ -44,7 +44,7 @@ exports.selectUsers = () => {
         })
 }
 
-exports.updateVotebyArticleId = (voteChange, article_id, voteObjKey) => {
+exports.updateVotebyArticleId = (voteChange, article_id) => {
 
     if (typeof voteChange !== 'number' && voteChange) {
         return Promise.reject({ status: 400, msg: 'Wrong data type!' });
@@ -64,3 +64,20 @@ exports.updateVotebyArticleId = (voteChange, article_id, voteObjKey) => {
             return updatedArticle;
         })
 }
+
+exports.selectArticles = () => {
+
+    sqlQuery =  `SELECT a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes, count(c.body) ::INT AS comment_count
+                FROM articles a, comments c
+                WHERE a.article_id = c.article_id
+                GROUP BY a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes
+                ORDER BY a.created_at DESC;`;
+
+    return db
+        .query(sqlQuery)
+        .then((data) => {
+            const articles = data.rows;
+            return articles;
+        })
+};
+
