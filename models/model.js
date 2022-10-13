@@ -73,8 +73,8 @@ exports.selectTopicsBySlug = (topic) => {
         .query(sqlQuery, [topic])
         .then((data) => {
             if (data.rows.length === 0) {
-                return Promise.reject({ status: 404, msg: 'Topic not found!' })
-            } 
+                return Promise.reject({ status: 404, msg: 'Topic doesn\'t exist!' })
+            }
             return;
         })
 }
