@@ -53,24 +53,16 @@ exports.updateVotes = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
+    
+    const { topic } = req.query;
 
-    const topic = req.query.topic;
-
-    if (Object.keys(req.query).length > 0) {
-        selectArticlesByQuery(topic)
-            .then((articles) => {
-                res.status(200).send(articles);
-            })
-            .catch((err) => {
-                next(err);
-            });
-    } else {
-        selectArticles()
-            .then((articles) => {
-                res.status(200).send({ articles });
-            })
-            .catch((err) => {
-                next(err);
-            });
-    }
+    selectArticles(topic)
+        .then((articles) => {
+            console.log(articles, 'response in contorlllllllllll')
+            res.status(200).send({ articles });
+        })
+        .catch((err) => {
+            console.log(err);
+            next(err);
+        });
 };

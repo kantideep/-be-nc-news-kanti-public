@@ -16,9 +16,6 @@ app.patch('/api/articles/:article_id', updateVotes)
 
 app.get('/api/articles', getArticles);
 
-app.get('/api/articles/', getArticles);
-
-
 
 //Handle endpoint error
 app.all('/*', (req, res) => {

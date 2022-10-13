@@ -65,40 +65,39 @@ exports.updateVotebyArticleId = (voteChange, article_id) => {
         })
 }
 
-exports.selectArticles = () => {
+exports.selectArticles = (topic) => {
 
-    sqlQuery = `SELECT a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes, count(c.body) ::INT AS comment_count
-                FROM articles a, comments c
-                WHERE a.article_id = c.article_id
-                GROUP BY a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes
-                ORDER BY a.created_at DESC;`;
+    const sort_by = 'created_at';
+    const order = 'DESC';
+
+    if (!['cats', 'mitch', 'paper'].includes(topic) && topic !== undefined) {
+        return Promise.reject({ status: 400, msg: "Topic doesn\'t exist!" });
+    }
+
+    const queryParams = [];
+
+    let sqlQuery = `SELECT a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes, count(c.body) ::INT AS comment_count
+                    FROM articles a, comments c
+                    WHERE a.article_id = c.article_id`;
+
+    if (topic) {
+        sqlQuery += ` AND a.topic = $1`;
+        queryParams.push(topic);
+    }
+
+    if (sort_by) {
+        sqlQuery += ` GROUP BY a.article_id ORDER BY ${sort_by}`;
+    }
+
+    if (order) {
+        sqlQuery += ` ${order};`;
+    }
 
     return db
-        .query(sqlQuery)
+        .query(sqlQuery, queryParams)
         .then((data) => {
             const articles = data.rows;
             return articles;
         })
 };
-
-exports.selectArticlesByQuery = (topic) => {
-
-    sqlQuery = `SELECT a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes, count(c.body) ::INT AS comment_count
-                FROM articles a, comments c
-                WHERE a.article_id = c.article_id
-                AND a.topic = $1
-                GROUP BY a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes
-                ORDER BY a.created_at DESC;`;
-
-    return db
-        .query(sqlQuery, [topic])
-        .then((result) => {
-
-            if (result.rows.length === 0) {
-                return Promise.reject({ status: 404, msg: 'Topic doesn\'t exist!' })
-            }
-            const articles = result.rows;
-            return articles;
-        })
-}
 

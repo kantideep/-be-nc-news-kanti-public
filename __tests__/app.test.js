@@ -197,21 +197,22 @@ describe('Task 8: GET /api/articles', () => {
                 expect(articles).toBeSortedBy('created_at', { descending: true, coerce: true });
             });
     });
-    test('should return status code:200 and a list of articles filtered by only a given topic', () => {
+    test('should return 200 and a list of articles filtered by only a given topic', () => {
         return request(app)
             .get('/api/articles?topic=mitch')
             .expect(200)
             .then(({ body }) => {
-                expect(body.length).toBe(4);
-                body.forEach((article) => {
+                const { articles } = body;
+                expect(articles).toHaveLength(4);
+                articles.forEach((article) => {
                     expect(article.topic).toEqual('mitch');
                 });
             });
     });
-    test('should return status code:200 and a list of articles filtered by only a given topic', () => {
+    test('status code:400 if topic does not exist', () => {
         return request(app)
             .get('/api/articles?topic=thisTopicNotAvailable')
-            .expect(404)
+            .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe('Topic doesn\'t exist!')
             })
