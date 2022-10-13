@@ -1,4 +1,4 @@
-const { selectTopics, selectArticleById, selectUsers, updateVotebyArticleId } = require('../models/model');
+const { selectTopics, selectArticleById, selectUsers, updateVotebyArticleId, selectArticles, selectCommentsByArticleId, selectTopicsBySlug } = require('../models/model');
 
 exports.getTopics = (req, res, next) => {
 
@@ -52,3 +52,28 @@ exports.updateVotes = (req, res, next) => {
         })
 }
 
+exports.getArticles = (req, res, next) => {
+
+    const { topic } = req.query;
+
+    selectArticles(topic)
+        .then((articles) => {
+            res.status(200).send({ articles });
+        })
+        .catch((err) => {
+            console.log(err);
+            next(err);
+        });
+};
+
+exports.getCommentsByArticleId = (req, res, next) => {
+    const { article_id } = req.params;
+
+    selectCommentsByArticleId(article_id)
+        .then((comments) => {
+            res.status(200).send({ comments });
+        })
+        .catch((err) => {
+            next(err);
+        });
+};

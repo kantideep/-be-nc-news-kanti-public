@@ -44,7 +44,7 @@ exports.selectUsers = () => {
         })
 }
 
-exports.updateVotebyArticleId = (voteChange, article_id, voteObjKey) => {
+exports.updateVotebyArticleId = (voteChange, article_id) => {
 
     if (typeof voteChange !== 'number' && voteChange) {
         return Promise.reject({ status: 400, msg: 'Wrong data type!' });
@@ -64,3 +64,70 @@ exports.updateVotebyArticleId = (voteChange, article_id, voteObjKey) => {
             return updatedArticle;
         })
 }
+
+exports.selectTopicsBySlug = (topic) => {
+
+    sqlQuery = `SELECT * FROM topics WHERE slug = $1;`
+
+    return db
+        .query(sqlQuery, [topic])
+        .then((data) => {
+            if (data.rows.length === 0) {
+                return Promise.reject({ status: 404, msg: 'Topic not found!' })
+            } 
+            return;
+        })
+}
+
+exports.selectArticles = (topic) => {
+
+    const sort_by = 'created_at';
+    const order = 'DESC';
+
+    const queryParams = [];
+
+    let sqlQuery = `SELECT a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes, count(c.body) ::INT AS comment_count
+                    FROM articles a, comments c
+                    WHERE a.article_id = c.article_id`;
+
+    if (topic) {
+        sqlQuery += ` AND a.topic = $1`;
+        queryParams.push(topic);
+    }
+
+    if (sort_by) {
+        sqlQuery += ` GROUP BY a.article_id ORDER BY ${sort_by}`;
+    }
+
+    if (order) {
+        sqlQuery += ` ${order};`;
+    }
+
+    return db
+        .query(sqlQuery, queryParams)
+        .then((data) => {
+
+            const articles = data.rows;
+
+            if (articles.length === 0) {
+                return Promise.reject({ status: 404, msg: 'Topic doesn\'t exist!' })
+            }
+            return articles;
+        })
+};
+
+exports.selectCommentsByArticleId = (article_id) => {
+
+    sqlQuery = `SELECT * FROM comments WHERE article_id = $1`;
+
+    return db
+        .query(sqlQuery, [article_id])
+        .then(({ rows }) => {
+
+            if (rows.length === 0) {
+                return Promise.reject({ status: 404, msg: 'This article doesn\'t exist, or it doesn\'t have comments.' })
+            }
+            return rows;
+        })
+};
+

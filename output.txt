@@ -1,6 +1,6 @@
 You are now connected to database "nc_news_test" as user "kantideep".
-    author     |                title                | article_id |               body                | topic |     created_at      | votes | comment_count 
----------------+-------------------------------------+------------+-----------------------------------+-------+---------------------+-------+---------------
- butter_bridge | Living in the shadow of a great man |          1 | I find this existence challenging | mitch | 2020-07-09 21:11:00 |   100 |            11
+  author  |                     title                     | article_id |                          body                          | topic |     created_at      | votes | comment_count 
+----------+-----------------------------------------------+------------+--------------------------------------------------------+-------+---------------------+-------+---------------
+ rogersop | UNCOVERED: catspiracy to bring down democracy |          5 | Bastet walks amongst us, and the cats are taking arms! | cats  | 2020-08-03 14:14:00 |     0 |             2
 (1 row)
 
