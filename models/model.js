@@ -65,14 +65,24 @@ exports.updateVotebyArticleId = (voteChange, article_id) => {
         })
 }
 
+exports.selectTopicsBySlug = (topic) => {
+
+    sqlQuery = `SELECT * FROM topics WHERE slug = $1;`
+
+    return db
+        .query(sqlQuery, [topic])
+        .then((data) => {
+            if (data.rows.length === 0) {
+                return Promise.reject({ status: 404, msg: 'Topic not found!' })
+            } 
+            return;
+        })
+}
+
 exports.selectArticles = (topic) => {
 
     const sort_by = 'created_at';
     const order = 'DESC';
-
-    if (!['cats', 'mitch', 'paper'].includes(topic) && topic !== undefined) {
-        return Promise.reject({ status: 400, msg: "Topic doesn\'t exist!" });
-    }
 
     const queryParams = [];
 
@@ -96,8 +106,28 @@ exports.selectArticles = (topic) => {
     return db
         .query(sqlQuery, queryParams)
         .then((data) => {
+
             const articles = data.rows;
+
+            if (articles.length === 0) {
+                return Promise.reject({ status: 404, msg: 'Topic doesn\'t exist!' })
+            }
             return articles;
+        })
+};
+
+exports.selectCommentsByArticleId = (article_id) => {
+
+    sqlQuery = `SELECT * FROM comments WHERE article_id = $1`;
+
+    return db
+        .query(sqlQuery, [article_id])
+        .then(({ rows }) => {
+
+            if (rows.length === 0) {
+                return Promise.reject({ status: 404, msg: 'This article doesn\'t exist, or it doesn\'t have comments.' })
+            }
+            return rows;
         })
 };
 

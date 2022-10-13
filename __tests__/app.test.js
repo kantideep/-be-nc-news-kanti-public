@@ -15,7 +15,7 @@ afterAll(() => {
 });
 
 describe('ALL /*', () => {
-    test('status: 404 for endpoint not found', () => {
+    test('404: for endpoint not found', () => {
         return request(app)
             .get('/non_existent_endpoint')
             .expect(404)
@@ -26,7 +26,7 @@ describe('ALL /*', () => {
 });
 
 describe('Task 3: GET /api/topics', () => {
-    test('status:200, responds with an array of topic objects', () => {
+    test('200: responds with an array of topic objects', () => {
         return request(app)
             .get('/api/topics')
             .expect(200)
@@ -47,7 +47,7 @@ describe('Task 3: GET /api/topics', () => {
 });
 
 describe('Task 4: GET /api/articles/:article_id', () => {
-    test('status:200, responds with a single matching article', () => {
+    test('200: responds with a single matching article', () => {
         const ARTICLE_ID = 1;
         return request(app)
             .get(`/api/articles/${ARTICLE_ID}`)
@@ -84,7 +84,7 @@ describe('Task 4: GET /api/articles/:article_id', () => {
 });
 
 describe('Task 5: GET /api/users', () => {
-    test('200, responds with an array of topic objects ', () => {
+    test('200: responds with an array of topic objects ', () => {
         return request(app)
             .get('/api/users')
             .expect(200)
@@ -102,7 +102,7 @@ describe('Task 5: GET /api/users', () => {
 });
 
 describe('Task 6: PATCH /api/articles/:article_id', () => {
-    test('200, responds with updated article when given a object with newVote object', () => {
+    test('200: responds with updated article when given a object with newVote object', () => {
         const newVoteObj = { inc_votes: 200 };
         return request(app)
             .patch('/api/articles/1')
@@ -120,7 +120,7 @@ describe('Task 6: PATCH /api/articles/:article_id', () => {
                 })
             })
     });
-    test('400, if passed an incorrect value in vote object', () => {
+    test('400: if passed an incorrect value in vote object', () => {
         const newVoteObj = { inc_votes: 'five' };
         return request(app)
             .patch('/api/articles/1')
@@ -130,7 +130,7 @@ describe('Task 6: PATCH /api/articles/:article_id', () => {
                 expect(body.msg).toBe('Wrong data type!');
             });
     });
-    test('400, if passed an incorrect key in vote object', () => {
+    test('400: if passed an incorrect key in vote object', () => {
         const newVoteObj = { wrongKey: 200 };
         return request(app)
             .patch('/api/articles/1')
@@ -163,7 +163,7 @@ describe('Task 6: PATCH /api/articles/:article_id', () => {
 });
 
 describe('Task 8: GET /api/articles', () => {
-    test('status:200, responds with an array of articles', () => {
+    test('200: responds with an array of articles', () => {
         return request(app)
             .get('/api/articles')
             .expect(200)
@@ -188,7 +188,7 @@ describe('Task 8: GET /api/articles', () => {
                 });
             });
     });
-    test('status:200: responds with articles ordered by dates in descending order', () => {
+    test('200: responds with articles ordered by dates in descending order', () => {
         return request(app)
             .get('/api/articles')
             .expect(200)
@@ -197,7 +197,7 @@ describe('Task 8: GET /api/articles', () => {
                 expect(articles).toBeSortedBy('created_at', { descending: true, coerce: true });
             });
     });
-    test('should return 200 and a list of articles filtered by only a given topic', () => {
+    test('200: return a list of articles filtered by only a given topic', () => {
         return request(app)
             .get('/api/articles?topic=mitch')
             .expect(200)
@@ -209,12 +209,46 @@ describe('Task 8: GET /api/articles', () => {
                 });
             });
     });
-    test('status code:400 if topic does not exist', () => {
+    test('404: if topic does not exist', () => {
         return request(app)
             .get('/api/articles?topic=thisTopicNotAvailable')
-            .expect(400)
+            .expect(404)
             .then(({ body }) => {
                 expect(body.msg).toBe('Topic doesn\'t exist!')
+            })
+    });
+});
+
+describe('Task 9: GET /api/articles/:article_id/comments ', () => {
+    test('200: brings back a comment object ', () => {
+        return request(app)
+            .get(`/api/articles/6/comments`)
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.comments).toEqual([{
+                    comment_id: 16,
+                    body: 'This is a bad article name',
+                    article_id: 6,
+                    author: 'butter_bridge',
+                    votes: 1,
+                    created_at: '2020-10-11T15:23:00.000Z'
+                }]);
+            });
+    });
+    test('404: returns an error message when passed an article id that is of the correct type but does not exist in the database', () => {
+        return request(app)
+            .get(`/api/articles/66666/comments`)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('This article doesn\'t exist, or it doesn\'t have comments.')
+            })
+    });
+    test('404: returns an error message when passed an article id that is of the correct but there are no comments in the database', () => {
+        return request(app)
+            .get(`/api/articles/2/comments`)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('This article doesn\'t exist, or it doesn\'t have comments.')
             })
     });
 });
