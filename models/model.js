@@ -67,7 +67,7 @@ exports.updateVotebyArticleId = (voteChange, article_id) => {
 
 exports.selectArticles = () => {
 
-    sqlQuery =  `SELECT a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes, count(c.body) ::INT AS comment_count
+    sqlQuery = `SELECT a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes, count(c.body) ::INT AS comment_count
                 FROM articles a, comments c
                 WHERE a.article_id = c.article_id
                 GROUP BY a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes
@@ -80,4 +80,25 @@ exports.selectArticles = () => {
             return articles;
         })
 };
+
+exports.selectArticlesByQuery = (topic) => {
+
+    sqlQuery = `SELECT a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes, count(c.body) ::INT AS comment_count
+                FROM articles a, comments c
+                WHERE a.article_id = c.article_id
+                AND a.topic = $1
+                GROUP BY a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes
+                ORDER BY a.created_at DESC;`;
+
+    return db
+        .query(sqlQuery, [topic])
+        .then((result) => {
+
+            if (result.rows.length === 0) {
+                return Promise.reject({ status: 404, msg: 'Topic doesn\'t exist!' })
+            }
+            const articles = result.rows;
+            return articles;
+        })
+}
 

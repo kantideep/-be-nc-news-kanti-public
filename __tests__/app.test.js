@@ -188,4 +188,32 @@ describe('Task 8: GET /api/articles', () => {
                 });
             });
     });
+    test('status:200: responds with articles ordered by dates in descending order', () => {
+        return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeSortedBy('created_at', { descending: true, coerce: true });
+            });
+    });
+    test('should return status code:200 and a list of articles filtered by only a given topic', () => {
+        return request(app)
+            .get('/api/articles?topic=mitch')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.length).toBe(4);
+                body.forEach((article) => {
+                    expect(article.topic).toEqual('mitch');
+                });
+            });
+    });
+    test('should return status code:200 and a list of articles filtered by only a given topic', () => {
+        return request(app)
+            .get('/api/articles?topic=thisTopicNotAvailable')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Topic doesn\'t exist!')
+            })
+    });
 });
