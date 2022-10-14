@@ -21,6 +21,7 @@ app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 //app.post('/api/articles/:article_id/comments', postComment);
 
 
+
 //Handle endpoint error
 app.all('/*', (req, res) => {
     res.status(404).send({ msg: 'Endpoint not found' });

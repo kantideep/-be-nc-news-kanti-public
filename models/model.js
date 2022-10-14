@@ -130,4 +130,3 @@ exports.selectCommentsByArticleId = (article_id) => {
             return rows;
         })
 };
-
