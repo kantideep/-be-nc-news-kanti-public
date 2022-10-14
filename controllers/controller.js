@@ -55,9 +55,9 @@ exports.updateVotes = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
 
-    const { topic } = req.query;
+    const { sort_by, order, topic } = req.query;
 
-    let promiseArr = [selectArticles(topic)];
+    let promiseArr = [selectArticles(sort_by, order, topic)];
 
     if (topic) {
         promiseArr.push(selectTopicsBySlug(topic))
@@ -89,14 +89,11 @@ exports.postComment = (req, res, next) => {
     const newComment = req.body;
     const { article_id } = req.params;
 
-    console.log(newComment, article_id, 'controlerrrrrrrrrrr')
-
     addComment(article_id, newComment)
         .then((addedComment) => {
             res.status(201).send({ addedComment });
         })
         .catch((err) => {
-            console.log(err);
             next(err);
         });
 };
