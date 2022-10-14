@@ -1,5 +1,5 @@
 const { push } = require('../db/data/test-data/articles');
-const { selectTopics, selectArticleById, selectUsers, updateVotebyArticleId, selectArticles, selectCommentsByArticleId, selectTopicsBySlug } = require('../models/model');
+const { selectTopics, selectArticleById, selectUsers, updateVotebyArticleId, selectArticles, selectCommentsByArticleId, selectTopicsBySlug, addComment } = require('../models/model');
 
 exports.getTopics = (req, res, next) => {
 
@@ -80,6 +80,23 @@ exports.getCommentsByArticleId = (req, res, next) => {
             res.status(200).send({ comments });
         })
         .catch((err) => {
+            next(err);
+        });
+};
+
+exports.postComment = (req, res, next) => {
+
+    const newComment = req.body;
+    const { article_id } = req.params;
+
+    console.log(newComment, article_id, 'controlerrrrrrrrrrr')
+
+    addComment(article_id, newComment)
+        .then((addedComment) => {
+            res.status(201).send({ addedComment });
+        })
+        .catch((err) => {
+            console.log(err);
             next(err);
         });
 };
