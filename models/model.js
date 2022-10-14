@@ -79,10 +79,15 @@ exports.selectTopicsBySlug = (topic) => {
         })
 }
 
-exports.selectArticles = (topic) => {
+exports.selectArticles = (sort_by = 'created_at', order = 'desc', topic) => {
 
-    const sort_by = 'created_at';
-    const order = 'DESC';
+    if (!['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count'].includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: 'Invalid sort_by!' });
+    }
+
+    if (!['asc', 'ASC', 'desc', 'DESC'].includes(order)) {
+        return Promise.reject({ status: 400, msg: 'Invalid order_by!' });
+    }
 
     const queryParams = [];
 
@@ -133,19 +138,14 @@ exports.selectCommentsByArticleId = (article_id) => {
 
 exports.addComment = (article_id, newComment) => {
 
-    console.log(newComment, article_id, 'modelllllllllllll')
-
     if (!newComment.hasOwnProperty('username') || !newComment.hasOwnProperty('body')) {
         return Promise.reject({ status: 400, msg: 'Comment is missing username or comment text!' });
     }
 
     const { username, body } = newComment;
 
-    console.log(username, body, 'modelllllllllllll')
-
-
     sqlQuery = `INSERT INTO comments (body, author, article_id, votes, created_at) VALUES ($1, $2, $3, 0, NOW()) RETURNING *;`
-        
+
     return db
         .query(sqlQuery, [body, username, article_id])
         .then(({ rows }) => {

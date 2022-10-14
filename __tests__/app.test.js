@@ -286,3 +286,38 @@ describe('Task 10: POST /api/articles/:article_id/comments', () => {
             })
     });
 });
+
+describe('Task 11: GET /api/articles with sort_by and order_by', () => {
+    test("200 returns articles sorted by author", () => {
+        return request(app)
+            .get("/api/articles?sort_by=author")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("author", {
+                    descending: true,
+                });
+            });
+    });
+    test("200 returns articles sorted by comment_counts", () => {
+        return request(app)
+            .get("/api/articles?sort_by=comment_count")
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.articles).toBeSortedBy("comment_count", {
+                    descending: true,
+                });
+            });
+    });
+    test("200 returns articles sorted by comment_counts in ascending ", () => {
+        return request(app)
+            .get("/api/articles?sort_by=comment_count&order=asc")
+            .expect(200)
+            .then(({ body }) => {
+                console.log(body);
+                expect(body.articles).toBeSortedBy("comment_count", {
+                    descending: false,
+                });
+            });
+    });
+    
+});
