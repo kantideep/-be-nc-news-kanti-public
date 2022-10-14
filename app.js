@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getTopics, getArticleById, getUsers, updateVotes, getArticles, getCommentsByArticleId } = require('./controllers/controller');
+const { getTopics, getArticleById, getUsers, updateVotes, getArticles, getCommentsByArticleId, postComment } = require('./controllers/controller');
 
 const app = express();
 
@@ -17,6 +17,9 @@ app.patch('/api/articles/:article_id', updateVotes)
 app.get('/api/articles', getArticles);
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
+
+app.post('/api/articles/:article_id/comments', postComment);
+
 
 
 //Handle endpoint error
@@ -46,6 +49,7 @@ app.use((err, req, res, next) => {
 
 //Handle internal error 
 app.use((err, req, res, next) => {
+    //console.log(err);
     res.sendStatus(500);
 });
 

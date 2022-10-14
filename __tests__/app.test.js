@@ -252,3 +252,37 @@ describe('Task 9: GET /api/articles/:article_id/comments ', () => {
             })
     });
 });
+
+describe('Task 10: POST /api/articles/:article_id/comments', () => {
+    test('201: returns a posted comment', () => {
+        const newComment = {
+            username: "icellusedkars",
+            body: "A quien madruga, Dios le ayuda!",
+        };
+        return request(app)
+            .post('/api/articles/3/comments')
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+                expect(body.addedComment).toEqual({
+                    comment_id: 19,
+                    body: "A quien madruga, Dios le ayuda!",
+                    article_id: 3,
+                    author: "icellusedkars",
+                    votes: 0,
+                    created_at: expect.any(String)
+                });
+            });
+    });
+    test('400: if comment is missing username or comment text', () => {
+        const newComment = { body: "A quien madruga, Dios le ayuda!" };
+
+        return request(app)
+            .post('/api/articles/3/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Comment is missing username or comment text!')
+            })
+    });
+});
