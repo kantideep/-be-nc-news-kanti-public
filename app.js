@@ -20,6 +20,14 @@ app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 
 app.post('/api/articles/:article_id/comments', postComment);
 
+const endpoints = require('./endpoints.json');
+
+app.get('/api', (req, res) => {
+    res.status(200).send({ endpoints });
+});
+
+
+
 
 
 //Handle endpoint error
