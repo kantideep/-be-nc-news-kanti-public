@@ -1,6 +1,7 @@
 const { push } = require('../db/data/test-data/articles');
 const { selectTopics, selectArticleById, selectUsers, updateVotebyArticleId, selectArticles, selectCommentsByArticleId, selectTopicsBySlug, addComment } = require('../models/model');
 
+//getTopics
 exports.getTopics = (req, res, next) => {
 
     selectTopics()
